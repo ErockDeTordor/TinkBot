@@ -1,29 +1,29 @@
-import { Tinkbot } from "../../tinkbot";
-import { ArgumentType } from "./types/type";
-import { Message } from "discord.js";
-import { ArgumentUnionType } from "./types/union";
+import {Tinkbot} from "../../tinkbot";
+import {ArgumentType} from "./types/type";
+import {Message} from "discord.js";
+import {ArgumentUnionType} from "./types/union";
 
 export type ArgumentInfo = {
     key: string;
     type: string;
-    default?: any|Function;
+    default?: any | Function;
 };
 
 type ArgumentResult = {
-    value?: any|any[];
+    value?: any | any[];
 };
 
 export class Argument {
-    readonly TinkbotClient: Tinkbot;
+    readonly client: Tinkbot;
     public key: string;
-    public default: any|Function;
+    public default: any | Function;
     public type: ArgumentType;
 
-    constructor(TinkbotClient: Tinkbot, info: ArgumentInfo) {
-        Argument.validateInfo(TinkbotClient, info);
+    constructor(client: Tinkbot, info: ArgumentInfo) {
+        Argument.validateInfo(client, info);
 
         this.key = info.key;
-        this.type = Argument.determineType(this.TinkbotClient, info.type);
+        this.type = Argument.determineType(this.client, info.type);
         this.default = (info.default) ? info.default : null;
     }
 

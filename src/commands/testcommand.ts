@@ -1,22 +1,20 @@
-import { Message, GuildChannel } from 'discord.js';
-import { Command } from '../classes/commands/command';
-import { Tinkbot } from '../classes/tinkbot';
-import { ArgumentCollectorResult } from '../classes/commands/arguments/collector';
+import {Message} from 'discord.js';
+import {Command} from '../classes/commands/command';
+import {Tinkbot} from '../classes/tinkbot';
 
 export class TestCommand extends Command {
-    constructor(TinkbotClient: Tinkbot) {
-        super(TinkbotClient, {
+    constructor(client: Tinkbot) {
+        super(client, {
             name: 'test',
             desc: 'Définit le canal utilisé par Tinkbot sur le serveur',
             ownerOnly: false,
             hidden: false,
 
-            args: [
-            ],
+            args: [],
         });
     }
 
-    async run(msg: Message): Promise<Message|Message[]> {
+    async run(msg: Message): Promise<Message | Message[]> {
         return msg.reply('Hello World!');
     }
 }

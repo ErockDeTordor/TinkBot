@@ -1,11 +1,8 @@
 'use strict';
 import * as Discord from 'discord.js';
 import * as path from 'path';
-import * as fs from 'fs';
-import { Command } from './commands/command';
-import { ArgumentType } from './commands/arguments/types/type';
-import { Registry } from './registry';
-import { ArgumentCollector } from './commands/arguments/collector';
+import {Command} from './commands/command';
+import {Registry} from './registry';
 
 export type TinkbotOptions = {
     owners: readonly string[];
@@ -19,7 +16,7 @@ export type TinkbotOptions = {
 export class Tinkbot {
     private static _INSTANCE: Tinkbot = null;
     private readonly _client: Discord.Client;
-    private _prefix: string;
+    private readonly _prefix: string;
     private readonly _token: string;
     private readonly _inDev: boolean;
     public readonly _owners: ReadonlyArray<string>;
@@ -94,11 +91,13 @@ export class Tinkbot {
             if (command) {
                 try {
                     if (command.argsCollector) {
-                        command.argsCollector.obtain(msg, args).then(result => {
-                            command.run(msg, result);
+                        command.argsCollector.obtain(msg, args).then(r => {
+                            command.run(msg, r);
                         });
                     } else {
-                        command.run(msg, null);
+                        command.run(msg, null).then().catch(e => {
+                            this._client.emit('error', e);
+                        });
                     }
                 } catch(error) {
                     console.error(error);
@@ -125,11 +124,13 @@ export class Tinkbot {
         return this._client.login(this._token);
     }
 
+    // noinspection JSUnusedGlobalSymbols,JSUnusedLocalSymbols
     async handleMessage(msg: Discord.Message): Promise<void> {
         
     }
 
     private updateGuildsCount(): void {
+        // noinspection JSIgnoredPromiseFromCall
         this._client.user.setPresence({ activity: {
             name: `les jeux gratuits pour ${this._client.guilds.cache.size} serveurs`,
             type: 'WATCHING',

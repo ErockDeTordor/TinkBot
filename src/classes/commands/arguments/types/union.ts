@@ -1,18 +1,18 @@
-import { ArgumentType } from "./type";
-import { Tinkbot } from "../../../tinkbot";
-import { Message } from "discord.js";
-import { Argument } from "../argument";
+import {ArgumentType} from "./type";
+import {Tinkbot} from "../../../tinkbot";
+import {Message} from "discord.js";
+import {Argument} from "../argument";
 
 export class ArgumentUnionType extends ArgumentType {
     private types: ArgumentType[];
-    
-    constructor(TinkbotClient: Tinkbot, id: string) {
-        super(TinkbotClient, id);
+
+    constructor(client: Tinkbot, id: string) {
+        super(client, id);
 
         this.types = [];
         const typeIDs = id.split('|');
         for (const typeID of typeIDs) {
-            const type = TinkbotClient.registry.types.get(typeID);
+            const type = client.registry.types.get(typeID);
             if (!type) throw new Error(`${typeID} is not a registered type!`);
             this.types.push(type);
         }

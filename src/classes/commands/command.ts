@@ -1,9 +1,9 @@
-import { Message, Snowflake, Util, User } from "discord.js";
-import { Argument, ArgumentInfo } from "./arguments/argument";
-import { Tinkbot } from "../tinkbot";
-import { Throttle, ThrottlingOptions } from "./throttle";
-import { ArgumentCollector, ArgumentCollectorResult } from "./arguments/collector";
-import { stripIndents } from "common-tags";
+import {Message, Snowflake, User, Util} from "discord.js";
+import {ArgumentInfo} from "./arguments/argument";
+import {Tinkbot} from "../tinkbot";
+import {Throttle, ThrottlingOptions} from "./throttle";
+import {ArgumentCollector, ArgumentCollectorResult} from "./arguments/collector";
+import {stripIndents} from "common-tags";
 
 export type CommandInfo = {
     /**
@@ -41,7 +41,7 @@ export type CommandInfo = {
 }
 
 export abstract class Command {
-    protected readonly TinkbotClient: Tinkbot;
+    protected readonly client: Tinkbot;
     public name: string;
     public aliases: string[];
     public description: string;
@@ -56,10 +56,10 @@ export abstract class Command {
      * @param {Tinkbot} client the client the command is for
      * @param {CommandInfo} info the command's information
      */
-    constructor(TinkbotClient: Tinkbot, info: CommandInfo) {
-        Command.validateInfo(TinkbotClient, info);
+    constructor(client: Tinkbot, info: CommandInfo) {
+        Command.validateInfo(client, info);
 
-        this.TinkbotClient = TinkbotClient;
+        this.client = client;
         this.name = info.name;
         this.aliases = info.aliases || [];
         this.description = info.desc;
@@ -67,15 +67,15 @@ export abstract class Command {
         this.ownerOnly = Boolean(info.ownerOnly);
         this.hidden = Boolean(info.hidden);
         this.throttling = info.throttling || null;
-        this.argsCollector = info.args && info.args.length ? 
-            new ArgumentCollector(TinkbotClient, info.args) : null;
+        this.argsCollector = info.args && info.args.length ?
+            new ArgumentCollector(client, info.args) : null;
         this._throttles = new Map();
     }
 
-    public abstract run(msg: Message, args?: ArgumentCollectorResult): Promise<Message|Message[]>;
+    public abstract run(msg: Message, args?: ArgumentCollectorResult): Promise<Message | Message[]>;
 
-    public onError(err: Error, message: Message, args: Object|string|string[], fromPattern: boolean, result: ArgumentCollectorResult): Promise<Message|Message[]> {
-        const owners = this.TinkbotClient.owners;
+    public onError(err: Error, message: Message): Promise<Message | Message[]> {
+        const owners = this.client.owners;
         const ownerList = owners ? owners.map((usr: User, i) => {
             const or = i === owners.length - 1 && owners.length > 1 ? 'ou ' : '';
             return `${or}${Util.escapeMarkdown(usr.username)}#${usr.discriminator}`;
@@ -90,24 +90,6 @@ export abstract class Command {
     public isTriggered(trigger: string): boolean {
         if (this.aliases.includes(trigger)) return true;
         return trigger === this.name;
-    }
-
-    private throttle(id: Snowflake): Throttle {
-        if (!this.throttling || this.TinkbotClient.isOwner(id)) return null;
-
-        let throttle: Throttle = this._throttles.get(id);
-        if (!throttle) {
-            throttle = {
-                start: Date.now(),
-                usages: 0,
-                timeout: this.TinkbotClient.setTimeout(() => {
-                    this._throttles.delete(id);
-                }, this.throttling.duration * 1000),
-            }
-            this._throttles.set(id, throttle);
-        }
-
-        return throttle;
     }
 
     private static validateInfo(TinkbotClient: Tinkbot, info: CommandInfo): void {

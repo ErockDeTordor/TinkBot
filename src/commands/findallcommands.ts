@@ -1,10 +1,10 @@
-import { Command } from "../classes/commands/command";
-import { Tinkbot } from "../classes/tinkbot";
-import { Message, Collection } from "discord.js";
+import {Command} from "../classes/commands/command";
+import {Tinkbot} from "../classes/tinkbot";
+import {Collection, Message} from "discord.js";
 
 export class FindAllCommands extends Command {
-    constructor(TinkbotClient: Tinkbot) {
-        super(TinkbotClient, {
+    constructor(client: Tinkbot) {
+        super(client, {
             name: 'findallcommands',
             desc: 'Affiche une liste de toutes les commandes',
             ownerOnly: true,
@@ -12,9 +12,9 @@ export class FindAllCommands extends Command {
         });
     }
 
-    async run(msg: Message): Promise<Message|Message[]> {
+    async run(msg: Message): Promise<Message | Message[]> {
         const allCommands: string[] = [];
-        const commands: Collection<string, Command> = this.TinkbotClient.registry.commands;
+        const commands: Collection<string, Command> = this.client.registry.commands;
         commands.forEach((command) => {
             allCommands.push(command.name);
         });

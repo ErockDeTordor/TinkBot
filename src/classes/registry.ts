@@ -1,16 +1,16 @@
-import { Tinkbot } from "./tinkbot";
-import { Collection } from "discord.js";
-import { ArgumentType } from "./commands/arguments/types/type";
-import { Command } from "./commands/command";
+import {Tinkbot} from "./tinkbot";
+import {Collection} from "discord.js";
+import {ArgumentType} from "./commands/arguments/types/type";
+import {Command} from "./commands/command";
 
 export class Registry {
-    public readonly TinkbotClient: Tinkbot;
+    public readonly client: Tinkbot;
     public types: Collection<string, ArgumentType>;
     public commands: Collection<string, Command>;
     public commandsPath: string;
 
-    constructor(TinkbotClient: Tinkbot) {
-        this.TinkbotClient = TinkbotClient;
+    constructor(client: Tinkbot) {
+        this.client = client;
         this.commands = new Collection();
         this.types = new Collection();
         this.commandsPath = null;
@@ -20,7 +20,7 @@ export class Registry {
         //console.log(command);
 
         let test = Object.values(command)[0];
-        if (test instanceof Function) command = new test(this.TinkbotClient);
+        if (test instanceof Function) command = new test(this.client);
         if (!(command instanceof Command)) throw new TypeError(`Invalid command object: ${command}`);
 
         if (this.commands.some(cmd => cmd.name === command.name || cmd.aliases.includes(command.name))) {
@@ -61,15 +61,15 @@ export class Registry {
         //console.log(type);
 
         let test = Object.values(type)[0];
-        if (test instanceof Function) type = new test(this.TinkbotClient);
-        if(!(type instanceof ArgumentType)) throw new TypeError(`Invalid type object: ${type}`);
+        if (test instanceof Function) type = new test(this.client);
+        if (!(type instanceof ArgumentType)) throw new TypeError(`Invalid type object: ${type}`);
 
         if (this.types.has(type.id)) throw new Error(`Argument type ID "${type.id}" registration duplicate!`);
 
         this.types.set(type.id, type);
 
         // Handle events here, maybe?
-        
+
         return this;
     }
 

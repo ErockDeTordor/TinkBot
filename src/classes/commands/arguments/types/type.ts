@@ -1,21 +1,21 @@
-import { Message } from "discord.js";
-import { Argument } from "../argument";
-import { Tinkbot } from "../../../tinkbot";
+import {Message} from "discord.js";
+import {Argument} from "../argument";
+import {Tinkbot} from "../../../tinkbot";
 
 
 export abstract class ArgumentType {
-    public readonly TinkbotClient: Tinkbot;
+    public readonly client: Tinkbot;
     public id: string;
 
     /**
      * @param client the client for the argument
      * @param id the argument type ID (lowercase)
      */
-    constructor(TinkbotClient: Tinkbot, id: string) {
-        if (!TinkbotClient) throw new Error('Client not specified!');
+    constructor(client: Tinkbot, id: string) {
+        if (!client) throw new Error('Client not specified!');
         if (id !== id.toLowerCase()) throw new Error('Argument type ID must be lowercase!');
 
-        this.TinkbotClient = TinkbotClient;
+        this.client = client;
         this.id = id;
     }
 
