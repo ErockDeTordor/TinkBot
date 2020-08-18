@@ -16,7 +16,8 @@
       // add path to @types
       "node_modules/@types"
     ],
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true
   },
   "exclude": [
     "node_modules"

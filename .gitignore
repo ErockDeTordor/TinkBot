@@ -56,4 +56,4 @@ package-lock.json
 
 # Sensitive Stuff #
 ###################
-.env
+*.env

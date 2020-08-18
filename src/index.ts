@@ -1,5 +1,5 @@
 'use strict';
-require('dotenv').config(); // Recommended way of loading dotenv
+//require('dotenv').config(); // Recommended way of loading dotenv
 import { Tinkbot } from "./classes/tinkbot.js";
 import { Snowflake } from "discord.js";
 
@@ -14,7 +14,7 @@ if (process.argv.includes('-dev')) {
     inDev = true;
 }
 
-let bot = Tinkbot.createInstance({
+let bot: Tinkbot = Tinkbot.createInstance({
     token,
     inDev,
     prefix: 't!',
